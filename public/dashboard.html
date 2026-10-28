@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title><link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script></head>
+<body><div class="layout"><nav class="side"></nav><main><h1 id="h">Dashboard</h1><div id="stats" class="grid"></div><div id="chartbox" class="card" style="max-width:380px;margin-bottom:20px;display:none"><canvas id="c"></canvas></div>
+<div class="card"><h3 id="th"></h3><div class="wrap"><table><thead id="thead"></thead><tbody id="tb"></tbody></table></div></div></main></div>
+<script src="js/app.js"></script><script>
+const fmt=d=>d?new Date(d).toLocaleDateString():'-';
+(async()=>{const u=await requireUser();if(!u)return;shell(u,'dashboard.html');h.textContent='Welcome, '+u.name;
+ try{
+ if(u.role==='admin'){const s=await api('/api/loans/stats');
+  stats.innerHTML=[['Total copies',s.totalBooks],['Available',s.availableBooks],['Borrowed',s.borrowedBooks],['Students',s.students],['Overdue',s.overdue]].map(([l,v])=>`<div class="card stat"><b data-v="${v}">0</b><span>${l}</span></div>`).join('');
+  stats.querySelectorAll('b').forEach(b=>counter(b,+b.dataset.v));
+  chartbox.style.display='block';new Chart(c,{type:'doughnut',data:{labels:['Available','Borrowed'],datasets:[{data:[s.availableBooks,s.borrowedBooks],backgroundColor:['#22d3ee','#8b5cf6'],borderWidth:0}]},options:{plugins:{legend:{labels:{color:'#e8ecf8'}}}}});
+  th.textContent='Recent activity';thead.innerHTML='<tr><th>Book</th><th>Student</th><th>Status</th><th>Due</th></tr>';
+  tb.innerHTML=s.recent.length?s.recent.map(l=>`<tr><td>${esc(l.book?.title)}</td><td>${esc(l.user?.name)}</td><td>${l.status}${l.overdue?' (overdue)':''}</td><td>${fmt(l.dueDate)}</td></tr>`).join(''):'<tr><td colspan=4 class="empty">No activity yet</td></tr>';
+ }else{const L=await api('/api/loans/mine');th.textContent='My borrowing history';
+  thead.innerHTML='<tr><th>Book</th><th>Borrowed</th><th>Due</th><th>Returned</th><th>Status</th><th>Fine</th></tr>';
+  tb.innerHTML=L.length?L.map(l=>`<tr><td>${esc(l.book?.title)}</td><td>${fmt(l.borrowedAt)}</td><td>${fmt(l.dueDate)}</td><td>${fmt(l.returnedAt)}</td><td>${l.overdue?'<span class="badge no">Overdue</span>':l.status}</td><td>${l.fine}</td></tr>`).join(''):'<tr><td colspan=6 class="empty">You have not borrowed any books yet</td></tr>';}
+ }catch(e){toast(e.message,'err');}})();
+</script></body></html>

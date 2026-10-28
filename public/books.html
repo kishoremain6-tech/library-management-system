@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Books</title><link rel="stylesheet" href="css/style.css"></head>
+<body><div class="layout"><nav class="side"></nav><main><h1>Book catalogue</h1>
+<div class="bar"><input id="q" placeholder="Search title, author, ISBN, category"><select id="cat"><option value="">All categories</option></select>
+<select id="av"><option value="">Any availability</option><option value="true">Available</option><option value="false">Unavailable</option></select><button class="btn" id="add" style="display:none">+ Add book</button></div>
+<div id="list" class="books"></div></main></div>
+<script src="js/app.js"></script><script>
+let U;const FIELDS=['title','author','isbn','category','publisher','year','totalCopies','coverImage','description'];
+async function load(){try{const p=new URLSearchParams({q:q.value,category:cat.value,available:av.value});
+ const d=await api('/api/books?'+p);const keep=cat.value;cat.innerHTML='<option value="">All categories</option>'+d.categories.map(c=>`<option ${c===keep?'selected':''}>${esc(c)}</option>`).join('');
+ list.innerHTML=d.books.length?d.books.map(b=>`<div class="card book"><div class="cover">${b.coverImage?`<img src="${esc(b.coverImage)}" alt="" onerror="this.remove()">`:'📖'}</div>
+ <b>${esc(b.title)}</b><div style="color:var(--mut);font-size:13px">${esc(b.author)} · ${esc(b.category)}</div><div style="margin:8px 0"><span class="badge ${b.availableCopies?'ok':'no'}">${b.availableCopies}/${b.totalCopies} available</span></div>
+ ${U.role==='admin'?`<button class="btn sm" onclick="edit('${b._id}')">Edit</button> <button class="btn sm red" onclick="del('${b._id}')">Delete</button>`:`<button class="btn sm" ${b.availableCopies?'':'disabled'} onclick="borrow('${b._id}')">Borrow</button>`}</div>`).join(''):'<div class="empty" style="grid-column:1/-1">No books match your search</div>';
+}catch(e){toast(e.message,'err');}}
+async function borrow(id){try{await api('/api/loans/borrow','POST',{bookId:id});toast('Book borrowed');load();}catch(e){toast(e.message,'err');}}
+async function del(id){if(!confirm('Delete this book?'))return;try{await api('/api/books/'+id,'DELETE');toast('Book deleted');load();}catch(e){toast(e.message,'err');}}
+async function save(id){const b={};for(const f of FIELDS){const v=prompt(f+(f==='totalCopies'?' (number)':''),cur[f]??'');if(v===null)return;b[f]=v;}
+ try{await api(id?'/api/books/'+id:'/api/books',id?'PUT':'POST',b);toast('Saved');load();}catch(e){toast(e.message,'err');}}
+let cur={};async function edit(id){try{cur=await api('/api/books/'+id);save(id);}catch(e){toast(e.message,'err');}}
+(async()=>{U=await requireUser();if(!U)return;shell(U,'books.html');if(U.role==='admin'){add.style.display='';add.onclick=()=>{cur={};save();};}
+ let t;q.oninput=()=>{clearTimeout(t);t=setTimeout(load,250);};cat.onchange=av.onchange=load;load();})();
+</script></body></html>
