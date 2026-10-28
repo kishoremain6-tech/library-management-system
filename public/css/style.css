@@ -23,3 +23,5 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;bor
 #toasts{position:fixed;right:16px;top:16px;z-index:9}.toast{padding:12px 18px;border-radius:12px;margin-bottom:8px;background:#151b3a;border:1px solid var(--line);animation:in .3s}.toast.err{border-color:#e5484d}.toast.good{border-color:#16a34a}
 @keyframes in{from{opacity:0;transform:translateX(20px)}}
 @media(max-width:760px){.layout{flex-direction:column}.side{width:100%;height:auto;position:static;display:flex;gap:6px;overflow-x:auto;padding:10px}.side h2{display:none}.side a{white-space:nowrap}main{padding:16px}}
+.issue-panel{margin-bottom:20px}.issue-form{display:grid;grid-template-columns:2fr 2fr auto;gap:12px;align-items:end}.issue-form label{grid-row:1}.issue-form select{grid-row:2}.issue-form button{grid-row:2}.records h2{margin-top:0}.check{display:flex;align-items:center;gap:8px;white-space:nowrap}.check input{width:auto}small{color:var(--mut)}
+@media(max-width:760px){.issue-form{grid-template-columns:1fr}.issue-form label,.issue-form select,.issue-form button{grid-row:auto}.check{width:100%}}

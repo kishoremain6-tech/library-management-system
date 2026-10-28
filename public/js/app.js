@@ -8,6 +8,7 @@ async function api(url,method='GET',body){
 async function requireUser(){try{return (await api('/api/auth/me')).user;}catch{location.href='/index.html';}}
 function shell(user,active){
  const l=[['dashboard.html','Dashboard'],['books.html','Books']];
+ if(user.role==='admin')l.push(['loans.html','Borrowing records']);
  document.querySelector('.side').innerHTML='<h2>📚 Library</h2>'+l.map(([h,t])=>`<a href="${h}" class="${h===active?'active':''}">${t}</a>`).join('')+
   `<a href="#" id="out">Logout (${esc(user.name)})</a>`;
  document.getElementById('out').onclick=async e=>{e.preventDefault();await api('/api/auth/logout','POST');location.href='/index.html';};}

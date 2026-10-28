@@ -13,5 +13,8 @@ MongoDB: install locally and keep `mongodb://127.0.0.1:27017/library`, or paste 
 ## Roles
 Registration always creates a **student**. The only admin is the one created by `npm run seed` from your `.env`.
 
+## College library borrowing
+The admin-only **Borrowing records** page lets librarians select a registered student and an available book, issue the loan, view the student's name/email and complete loan history, filter overdue or returned records, and mark active loans as returned. The admin can only add, edit, and delete catalogue books; students can only browse and borrow books for themselves.
+
 ## Rules (set in .env)
 Loan length `LOAN_DAYS`, fine per overdue day `FINE_PER_DAY`, max active loans per student `MAX_ACTIVE_LOANS`.

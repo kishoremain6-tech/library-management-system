@@ -14,8 +14,9 @@ async function issue(userId,bookId){
 r.use(protect);
 r.post('/borrow',async(q,s,n)=>{try{s.status(201).json(await issue(q.user._id,q.body.bookId));}catch(e){n(e);}});
 r.post('/issue',adminOnly,async(q,s,n)=>{try{
- if(!await User.exists({_id:q.body.userId}))return s.status(404).json({message:'User not found'});
- s.status(201).json(await issue(q.body.userId,q.body.bookId));}catch(e){n(e);}});
+ const user=await User.findOne(q.body.userId?{_id:q.body.userId}:{email:(q.body.email||'').toLowerCase().trim()}).select('_id');
+ if(!user)return s.status(404).json({message:'Student not found'});
+ s.status(201).json(await issue(user._id,q.body.bookId));}catch(e){n(e);}});
 r.post('/:id/return',adminOnly,async(q,s,n)=>{try{
  const l=await Loan.findOne({_id:q.params.id,status:'borrowed'});if(!l)return s.status(409).json({message:'Loan not found or already returned'});
  l.returnedAt=new Date();l.fine=fineOf(l);l.status='returned';await l.save();
