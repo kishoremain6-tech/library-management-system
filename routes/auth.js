@@ -5,11 +5,15 @@ const send=(res,u)=>{const t=jwt.sign({id:u._id},process.env.JWT_SECRET,{expires
  res.cookie('token',t,{httpOnly:true,sameSite:'strict',maxAge:864e5});
  res.json({user:{id:u._id,name:u.name,email:u.email,role:u.role}});};
 r.post('/register',async(q,s,n)=>{try{
+ return s.status(403).json({message:'New members must be registered by library staff'});
+}catch(e){n(e);}});
+r.post('/members',protect,adminOnly,async(q,s,n)=>{try{
  const {name,email,password}=q.body;
  if(!name||name.trim().length<2)return s.status(400).json({message:'Name must be at least 2 characters'});
  if(!okEmail(email))return s.status(400).json({message:'Enter a valid email'});
  if(!password||password.length<8)return s.status(400).json({message:'Password must be at least 8 characters'});
- const u=await User.create({name,email,password:await bcrypt.hash(password,12),role:'student'});send(s,u);
+ const u=await User.create({name:name.trim(),email:email.toLowerCase().trim(),password:await bcrypt.hash(password,12),role:'student'});
+ s.status(201).json({user:{id:u._id,name:u.name,email:u.email,role:u.role}});
 }catch(e){n(e);}});
 r.post('/login',async(q,s,n)=>{try{
  const {email,password}=q.body;if(!okEmail(email)||!password)return s.status(400).json({message:'Email and password required'});

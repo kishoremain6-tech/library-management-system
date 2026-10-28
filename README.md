@@ -11,10 +11,10 @@ npm start                        # open http://localhost:3000
 MongoDB: install locally and keep `mongodb://127.0.0.1:27017/library`, or paste a MongoDB Atlas connection string into `MONGODB_URI`.
 
 ## Roles
-Registration always creates a **student**. The only admin is the one created by `npm run seed` from your `.env`.
+Library staff creates each **member** at the desk. Public self-registration is disabled. The only admin is the one created by `npm run seed` from your `.env`.
 
-## College library borrowing
-The admin-only **Borrowing records** page lets librarians select a registered student and an available book, issue the loan, view the student's name/email and complete loan history, filter overdue or returned records, and mark active loans as returned. The admin can only add, edit, and delete catalogue books; students can only browse and borrow books for themselves.
+## Physical in-library counter workflow
+This is a real-world desk system rather than an online borrowing service. Library staff register each visitor in **Register member**, choose that member and an available book in **Borrowing records**, issue the book at the desk, and mark it returned when the visitor brings it back. Visitors do not create accounts or borrow online; they receive the physical book directly from staff.
 
 ## Rules (set in .env)
 Loan length `LOAN_DAYS`, fine per overdue day `FINE_PER_DAY`, max active loans per student `MAX_ACTIVE_LOANS`.

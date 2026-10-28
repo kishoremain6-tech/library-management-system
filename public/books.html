@@ -9,7 +9,7 @@ async function load(){try{const p=new URLSearchParams({q:q.value,category:cat.va
  const d=await api('/api/books?'+p);const keep=cat.value;cat.innerHTML='<option value="">All categories</option>'+d.categories.map(c=>`<option ${c===keep?'selected':''}>${esc(c)}</option>`).join('');
  list.innerHTML=d.books.length?d.books.map(b=>`<div class="card book"><div class="cover">${b.coverImage?`<img src="${esc(b.coverImage)}" alt="" onerror="this.remove()">`:'📖'}</div>
  <b>${esc(b.title)}</b><div style="color:var(--mut);font-size:13px">${esc(b.author)} · ${esc(b.category)}</div><div style="margin:8px 0"><span class="badge ${b.availableCopies?'ok':'no'}">${b.availableCopies}/${b.totalCopies} available</span></div>
- ${U.role==='admin'?`<button class="btn sm" onclick="edit('${b._id}')">Edit</button> <button class="btn sm red" onclick="del('${b._id}')">Delete</button>`:`<button class="btn sm" ${b.availableCopies?'':'disabled'} onclick="borrow('${b._id}')">Borrow</button>`}</div>`).join(''):'<div class="empty" style="grid-column:1/-1">No books match your search</div>';
+ ${U.role==='admin'?`<button class="btn sm" onclick="edit('${b._id}')">Edit</button> <button class="btn sm red" onclick="del('${b._id}')">Delete</button>`:'<span class="badge ok">${b.availableCopies?'Available at desk':'Unavailable'}</span>'}</div>`).join(''):'<div class="empty" style="grid-column:1/-1">No books match your search</div>';
 }catch(e){toast(e.message,'err');}}
 async function borrow(id){try{await api('/api/loans/borrow','POST',{bookId:id});toast('Book borrowed');load();}catch(e){toast(e.message,'err');}}
 async function del(id){if(!confirm('Delete this book?'))return;try{await api('/api/books/'+id,'DELETE');toast('Book deleted');load();}catch(e){toast(e.message,'err');}}

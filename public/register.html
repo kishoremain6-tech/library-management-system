@@ -1,8 +1,9 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Register</title><link rel="stylesheet" href="css/style.css"></head>
-<body><div class="auth"><h1>Create account</h1><div class="card"><form id="f">
-<label>Name</label><input id="name" required minlength="2"><label>Email</label><input type="email" id="email" required>
-<label>Password (min 8 characters)</label><input type="password" id="pw" required minlength="8">
-<p><button class="btn" style="width:100%">Register</button></p></form><p style="text-align:center">Have an account? <a href="index.html">Log in</a></p></div></div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Register Library Member</title><link rel="stylesheet" href="css/style.css"></head>
+<body><div class="layout"><nav class="side"></nav><main><div class="auth"><h1>Register library member</h1><div class="card"><form id="f">
+<label>Visitor name</label><input id="name" required minlength="2"><label>Email address</label><input type="email" id="email" required>
+<label>Temporary password (min 8 characters)</label><input type="password" id="pw" required minlength="8">
+<p><button class="btn" style="width:100%">Register visitor</button></p></form></div></div></main></div>
 <script src="js/app.js"></script><script>
-f.onsubmit=async e=>{e.preventDefault();const nameInput=document.getElementById('name'),emailInput=document.getElementById('email'),passwordInput=document.getElementById('pw');try{await api('/api/auth/register','POST',{name:nameInput.value.trim(),email:emailInput.value.trim(),password:passwordInput.value});location.href='dashboard.html';}catch(x){toast(x.message,'err');}};
+(async()=>{const u=await requireUser();if(u.role!=='admin'){location.href='/dashboard.html';return;}shell(u,'register.html');})();
+f.onsubmit=async e=>{e.preventDefault();const nameInput=document.getElementById('name'),emailInput=document.getElementById('email'),passwordInput=document.getElementById('pw');try{await api('/api/auth/members','POST',{name:nameInput.value.trim(),email:emailInput.value.trim(),password:passwordInput.value});toast('Member registered');f.reset();}catch(x){toast(x.message,'err');}};
 </script></body></html>
