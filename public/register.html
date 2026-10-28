@@ -4,5 +4,5 @@
 <label>Password (min 8 characters)</label><input type="password" id="pw" required minlength="8">
 <p><button class="btn" style="width:100%">Register</button></p></form><p style="text-align:center">Have an account? <a href="index.html">Log in</a></p></div></div>
 <script src="js/app.js"></script><script>
-f.onsubmit=async e=>{e.preventDefault();try{await api('/api/auth/register','POST',{name:name.value,email:email.value,password:pw.value});location.href='dashboard.html';}catch(x){toast(x.message,'err');}};
+f.onsubmit=async e=>{e.preventDefault();const nameInput=document.getElementById('name'),emailInput=document.getElementById('email'),passwordInput=document.getElementById('pw');try{await api('/api/auth/register','POST',{name:nameInput.value.trim(),email:emailInput.value.trim(),password:passwordInput.value});location.href='dashboard.html';}catch(x){toast(x.message,'err');}};
 </script></body></html>
